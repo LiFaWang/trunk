@@ -1,0 +1,13 @@
+package net.huansi.hsgmtapp.event;
+
+/**
+ * Created by 单中年 on 2016/12/12.
+ */
+
+public class BackgroundEvent {
+    public Class aClass;
+    public int index;
+    public String str1;
+
+
+}

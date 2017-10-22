@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="@color/white"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/imvJsSubmitBrowseParentItemIndicator"
+            android:layout_width="18dp"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="3dp"
+            android:src="@drawable/icon_expanlistview_arraw_right"
+            android:layout_height="18dp" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:paddingTop="1.5dp"
+                android:paddingBottom="1.5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:text="主题"
+                    android:textSize="13sp"
+                    android:textColor="@color/black"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:id="@+id/tvJsSubmitBrowseParentItemTitle"
+                    android:singleLine="true"
+                    android:textSize="13sp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="wrap_content"
+                    android:text="AAA"
+                    android:textColor="@color/black"
+                    android:layout_height="wrap_content" />
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="1.5dp"
+                android:paddingTop="1.5dp"
+                android:orientation="horizontal"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:text="日期："
+                        android:textSize="13sp"
+                        android:textColor="@color/black"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:id="@+id/tvJsSubmitBrowseParentItemDate"
+                        android:layout_marginLeft="10dp"
+                        android:layout_width="wrap_content"
+                        android:text="0000-00-00"
+                        android:textSize="13sp"
+                        android:textColor="@android:color/holo_blue_light"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:gravity="left"
+                    android:orientation="horizontal"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:text="时间："
+                        android:textSize="13sp"
+                        android:textColor="@color/black"
+                        android:layout_height="wrap_content" />
+                    <TextView
+                        android:layout_marginLeft="10dp"
+                        android:id="@+id/tvJsSubmitBrowseParentItemTime"
+                        android:layout_width="wrap_content"
+                        android:text="0000-00-00"
+                        android:textSize="13sp"
+                        android:textColor="@android:color/holo_blue_light"
+                        android:layout_height="wrap_content" />
+                </LinearLayout>
+
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="1.5dp"
+                android:paddingTop="1.5dp"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:text="内容："
+                    android:textSize="13sp"
+                    android:textColor="@color/black"
+                    android:layout_height="wrap_content" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:text="内容:"
+                    android:id="@+id/tvJsSubmitBrowseParentItemContent"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="13sp"
+                    android:singleLine="true"
+                    android:textColor="@color/black"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+   <View
+       android:layout_width="match_parent"
+       android:layout_height="1dp"
+       android:background="@color/black"
+       />
+</LinearLayout>

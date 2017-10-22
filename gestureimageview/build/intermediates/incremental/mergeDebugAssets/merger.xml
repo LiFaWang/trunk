@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger version="3"><dataSet config="main"><source path="E:\work\qianjintrunck\trunk\gestureimageview\src\main\assets"/><source path="E:\work\qianjintrunck\trunk\gestureimageview\build\generated\assets\shaders\debug"/></dataSet><dataSet config="debug"><source path="E:\work\qianjintrunck\trunk\gestureimageview\src\debug\assets"/></dataSet></merger>
