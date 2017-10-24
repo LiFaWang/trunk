@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.TextView;
@@ -66,6 +68,7 @@ import huansi.net.qianjingapp.utils.OthersUtil;
 import huansi.net.qianjingapp.utils.SPHelper;
 import rx.functions.Func1;
 
+import static android.graphics.Color.parseColor;
 import static android.view.View.GONE;
 import static android.view.View.INVISIBLE;
 import static android.view.View.VISIBLE;
@@ -81,25 +84,11 @@ public class AssignMainActivity extends NotWebBaseActivity implements View.OnCli
     private AssignMainActivityBinding assignMainActivityBinding;
     private int[] length;//屏幕长宽;
 
-//    private List<StyleNumBean> mFliterStyleNumList;//筛选款号数据集合
-//    private List<AssignTopFilterBaseDataBean> mFliterBatchNumList;//筛选的批次号集合
-//    private List<StyleNumBean> listFliterStyleItem;//筛选款号的数据
     private List<AssignTopFilterBaseDataBean> topFilterBaseDataList;//筛选订单号、款号、批次号的数据
     private List<AssignTopFilterBaseDataBean> topFilterBaseDataBeanShowList;//显示的list
-//    private List<AssignTopFilterBaseDataBean> mBatchNumBeanList;//批次号数据
-//    private List<TableHeadBean> mTableHeadBeanList;//订单号数据
-//    private List<StyleNumBean> mStyleNumBeanList;//款号数据
-//    private List<BarDataSet> barChartList;//存储BarDataSet
     private String order="";//订单号
     private String style="";//款号
     private String product="";//批次号
-
-
-    //    private List<RealTimeProcessBarBean> data;//实时监控设备数据
-//    private BarDataSet allPointsName, errorPointsName;//所有点数，异常点数名字
-//    private ArrayList<BarEntry> allPoints, errorPoints;//所有点数，异常点数
-
-//    private List<AssignTopFilterBaseDataBean> mAssignTopFilterBaseDataBeanList;
 
 
 
@@ -116,11 +105,13 @@ public class AssignMainActivity extends NotWebBaseActivity implements View.OnCli
     private ArrayAdapter<String> classGroupNameAdapter;//班组名称的adapter
 
     private boolean isShrink = false;//false=>释放 true=>收缩
-    private boolean isChecked;//班组栏的选择
+    private boolean isProcessWorkerChecked;//工序组的选择
     private String mSemployeeno;//员工编码
     private List<WsEntity> mClassGroupBeanEntityList;//班组的源数据
 
     private String xData[];//X轴描述的数组
+    private long mFirstClick;
+    private List<ProcessWorkerBean> mProcessWorkerBeanList;//当前工序组的员工集合
 
 
     @Override
@@ -142,7 +133,6 @@ public class AssignMainActivity extends NotWebBaseActivity implements View.OnCli
         });
         topFilterBaseDataList=new ArrayList<>();
         topFilterBaseDataBeanShowList=new ArrayList<>();
-//        mAssignTopFilterBaseDataBeanList = new ArrayList<>();
         mRealTimeProcessBarBeanList = new ArrayList<>();
         workerBeanList = new ArrayList<>();
         classGroupBeanSourceMap = new HashMap<>();
@@ -173,88 +163,37 @@ public class AssignMainActivity extends NotWebBaseActivity implements View.OnCli
         assignMainActivityBinding.spGroupName.setAdapter(classGroupNameAdapter);
 
         initChart();
-
+        //新增员工
         assignMainActivityBinding.gvGroup.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                for (int i = 0; i < classGroupBeanShowList.size(); i++) {
-                    if (position == i) {
-                        classGroupBeanShowList.get(i).isSelected = !classGroupBeanShowList.get(i).isSelected;
-                        isChecked = classGroupBeanShowList.get(i).isSelected;
-                        mSemployeeno = classGroupBeanShowList.get(i).SEMPLOYEENO;
-                        mGroupAdapter.notifyDataSetChanged();
-                        continue;
-                    }
-                    classGroupBeanShowList.get(i).isSelected = false;
-                    mGroupAdapter.notifyDataSetChanged();
+                long c = System.currentTimeMillis();
+                if (c - mFirstClick > 500) {
+                    mFirstClick = c;
+                    return;
                 }
+                mFirstClick = c;
+                changeItemSelectedStatus(position);//改变工作人员组的选择状态
             }
         });
-
-        mProcessWorkerAdapter.setOnSubItemClickListener(new ProcessWorkerAdapter.OnSubItemClickListener() {
-            //删除员工
+        assignMainActivityBinding.lvWork.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onSubItemClick(final View v) {
-                final ProcessWorkerBean bean = (ProcessWorkerBean) v.getTag();
-                AlertDialog.Builder builder = new AlertDialog.Builder(AssignMainActivity.this);
-                builder.setMessage("确定要把 " + bean.SEMPLOYEENAMECN + " 从 " + bean.SPARTNAME + " 组中移除吗？");
-                builder.setTitle("提示");
-                builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        deleteWorkers(bean.IIDEN);
-                        OthersUtil.ToastMsg(AssignMainActivity.this, ((TextView) v).getText().toString()+"删除成功");
-                    }
-                });
-                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                    }
-                });
-                builder.create().show();
-            }
-
-            //新增员工
-            @Override
-            public void onItemClick(final View v) {
-                if (isChecked) {
-                    final ProcessWorkerBean processWorkerBean = (ProcessWorkerBean) v.getTag();
-                    v.setBackgroundColor(Color.GREEN);
-                    AlertDialog.Builder builder = new AlertDialog.Builder(AssignMainActivity.this);
-                    builder.setMessage("确定要添加到 " + processWorkerBean.SPARTNAME + " 工序吗？");
-                    builder.setTitle("提示");
-                    builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
-
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            upDateWorkers(processWorkerBean.SPARTNAME, processWorkerBean.IHDRID, processWorkerBean.ICUPROCEDUREID, mSemployeeno);
-                            for (int i = 0; i <classGroupBeanShowList.size(); i++) {
-                                ClassGroupBean s = classGroupBeanShowList.get(i);
-                                s.isSelected=false;
-                            }
-                            isChecked = false;
-                            mGroupAdapter.notifyDataSetChanged();
-
-                            v.setBackgroundColor(Color.parseColor("#E8E8E8"));
-                            dialog.dismiss();
-                        }
-                    });
-
-                    builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            v.setBackgroundColor(Color.parseColor("#E8E8E8"));
-                            dialog.dismiss();
-                        }
-                    });
-                    builder.create().show();
+                long c = System.currentTimeMillis();
+                if (c - mFirstClick > 500) {
+                    mFirstClick = c;
+                    selectedProgressItem(position);//单击选中条目
+                }else {
+                    mFirstClick = c;
+                    doubleClickProgressItem(position);//双击跳转到删除界面
                 }
 
             }
         });
-        //查询工作人员
+
+
+
         assignMainActivityBinding.tvSearch.setOnClickListener(new View.OnClickListener() {
 
 
@@ -284,14 +223,13 @@ public class AssignMainActivity extends NotWebBaseActivity implements View.OnCli
             }
         });
 
-
+        //工作组按照组名筛选的下拉列表
         assignMainActivityBinding.spGroupName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 for (ClassGroupBean classGroupBean : classGroupBeanShowList) {
                     classGroupBean.isSelected = false;
                 }
-                isChecked = false;
                 showClassGroupDataByName(classGroupNameList.get(position));
             }
 
@@ -359,6 +297,139 @@ public class AssignMainActivity extends NotWebBaseActivity implements View.OnCli
             //加载筛选条件信息
             initHeadChard();
         }
+    }
+
+    /**
+     * 双击跳转到删除界面
+     * @param position
+     */
+    private void doubleClickProgressItem(final int position) {
+        for (int i = 0; i < workerBeanList.size(); i++) {
+            workerBeanList.get(i).get(0).isSelected = false;
+        }
+        mProcessWorkerAdapter.notifyDataSetChanged();
+
+        final List<ProcessWorkerBean> subProcessWorkerBeanList = workerBeanList.get(position);
+        View view = View.inflate(this, R.layout.worker_pic, null);
+        final ProcessWorkerBean[] delProcessWorkerBean={null};
+        final LinearLayout  llWorkerPic = (LinearLayout) view.findViewById(R.id.ll_workerPic);
+        for (int i = 0; i <subProcessWorkerBeanList.size() ; i++) {
+            final ImageView imageView=new ImageView(getApplicationContext());
+            ProcessWorkerBean processWorkerBean = subProcessWorkerBeanList.get(i);
+            String path="http://"+ SPHelper.getLocalData(AssignMainActivity.this, RLFP_IP,String.class.getName(),"").toString()
+                    +RLFP_PICTURE_FOLDER+
+                    processWorkerBean.SPICTUREPATH;
+            Glide.with(AssignMainActivity.this)
+                    .load(path)
+                    .placeholder(R.drawable.icon_default) //设置占位图
+                    .error(R.drawable.icon_default)//设置错误图片
+                    .into(imageView);
+
+            imageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int p=(int)v.getTag();
+                    ProcessWorkerBean bean=subProcessWorkerBeanList.get(p);
+                    delProcessWorkerBean[0]=bean;
+                    llWorkerPic.removeViewAt(p);
+                }
+            });
+            imageView.setTag(i);
+            llWorkerPic.addView(imageView);
+        }
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(AssignMainActivity.this);
+                builder.setMessage("请选择要删除的员工");
+                builder.setTitle("提示");
+                builder.setView(view);
+                builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        deleteWorkers(delProcessWorkerBean[0].IIDEN);//删除员工
+                        dialog.dismiss();
+                    }
+                });
+                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.create().show();
+    }
+
+    /**
+     * 单击选中工序组条目
+     * @param position
+     */
+    private void selectedProgressItem(int position) {
+        isProcessWorkerChecked =false;
+        for (int i = 0; i < workerBeanList.size(); i++) {
+            if (position==i){
+                workerBeanList.get(i).get(0).isSelected = !workerBeanList.get(i).get(0).isSelected;
+                if (workerBeanList.get(i).get(0).isSelected){
+                    mProcessWorkerBeanList = workerBeanList.get(i);
+                    isProcessWorkerChecked =true;
+                }
+                continue;
+            }
+            workerBeanList.get(i).get(0).isSelected = false;
+        }
+        mProcessWorkerAdapter.notifyDataSetChanged();
+    }
+
+    /**
+     * 改变工作人员组的选择状态
+     * @param position
+     */
+    private void changeItemSelectedStatus(int position) {
+        for (int i = 0; i < classGroupBeanShowList.size(); i++) {
+            if (position == i) {
+                mSemployeeno = classGroupBeanShowList.get(i).SEMPLOYEENO;
+                if (isProcessWorkerChecked) {
+                    classGroupBeanShowList.get(i).isSelected= !classGroupBeanShowList.get(i).isSelected;
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(AssignMainActivity.this);
+                    final ProcessWorkerBean processWorkerBean = mProcessWorkerBeanList.get(0);
+                    builder.setMessage("确定要添加到 " +processWorkerBean.SWORKTEAMNAME  + " 工序吗？");
+                    builder.setTitle("提示");
+                    builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            //增加工作人员
+                            upDateWorkers(processWorkerBean.SPARTNAME, processWorkerBean.IHDRID, processWorkerBean.ICUPROCEDUREID, mSemployeeno);
+                            for (int i = 0; i <classGroupBeanShowList.size(); i++) {
+                                ClassGroupBean s = classGroupBeanShowList.get(i);
+                                s.isSelected=false;
+                            }
+                            mGroupAdapter.notifyDataSetChanged();
+                            mProcessWorkerAdapter.notifyDataSetChanged();
+                            dialog.dismiss();
+                        }
+                    });
+
+                    builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            for (int i = 0; i <classGroupBeanShowList.size(); i++) {
+                                ClassGroupBean s = classGroupBeanShowList.get(i);
+                                s.isSelected=false;
+                            }
+                            dialog.dismiss();
+                            mGroupAdapter.notifyDataSetChanged();
+                            mProcessWorkerAdapter.notifyDataSetChanged();
+
+                        }
+                    });
+                    builder.create().show();
+                }
+                continue;
+            }
+            classGroupBeanShowList.get(i).isSelected = false;
+        }
+        mGroupAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -882,7 +953,7 @@ public class AssignMainActivity extends NotWebBaseActivity implements View.OnCli
                     colorStr="#294230";
                     break;
             }
-            colorList.add(Color.parseColor(colorStr));
+            colorList.add(parseColor(colorStr));
         }
         BarDataSet barDataSet=new BarDataSet(barList,"");//设置柱子的信息
         barDataSet.setColors(colorList);

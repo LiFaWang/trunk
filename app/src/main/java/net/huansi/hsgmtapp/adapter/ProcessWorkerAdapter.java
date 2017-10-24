@@ -28,16 +28,6 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
 public class ProcessWorkerAdapter extends HsBaseAdapter<List<ProcessWorkerBean>> {
 
-    public void setOnSubItemClickListener(OnSubItemClickListener onSubItemClickListener) {
-        mOnSubItemClickListener = onSubItemClickListener;
-    }
-
-    private OnSubItemClickListener mOnSubItemClickListener;
-
-    public interface OnSubItemClickListener{
-       void  onSubItemClick(View v);
-        void onItemClick(View v);
-    }
 
     public ProcessWorkerAdapter(List<List<ProcessWorkerBean>> list, Context context) {
         super(list, context);
@@ -48,24 +38,18 @@ public class ProcessWorkerAdapter extends HsBaseAdapter<List<ProcessWorkerBean>>
         if (convertView == null)
             convertView = mInflater.inflate(R.layout.item_work_list, parent, false);
         LinearLayout llWorkerItem = ViewHolder.get(convertView, R.id.ll_work_item);
+        TextView tvProgressNo = ViewHolder.get(convertView, R.id.tv_progress_no);//工序号
+        TextView tvProgressLevel = ViewHolder.get(convertView, R.id.tv_progress_level);//工序等级
         LinearLayout llWorkerNameContainer = ViewHolder.get(convertView, R.id.ll_worker_name_container);
         TextView tvProgressName = ViewHolder.get(convertView, R.id.tv_progress_name);
         llWorkerNameContainer.removeAllViews();
         List<ProcessWorkerBean> subList = mList.get(position);
         ProcessWorkerBean tag = subList.get(0);
-        if (position % 2 != 0) {
-            llWorkerItem.setBackgroundColor(Color.parseColor("#ffffff"));
-        } else {
-            llWorkerItem.setBackgroundColor(Color.parseColor("#E8E8E8"));
-        }
+        convertView.setBackgroundColor(tag.isSelected? Color.YELLOW:position%2==0?Color.WHITE:Color.parseColor("#E8E8E8"));
         tvProgressName.setText(tag.SPARTNAME);
+        tvProgressNo.setText(tag.ISEQ);
+        tvProgressLevel.setText(tag.SGRADENAME);
         tvProgressName.setTag(tag);
-        tvProgressName.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-              mOnSubItemClickListener.onItemClick(v);
-            }
-        });
         List<LinearLayout> workerLayout = new ArrayList<>();//员工存放的layout，每个layout最多只存放两个
         for (int i = 0; i < subList.size(); i++) {
             ProcessWorkerBean bean = subList.get(i);
@@ -95,13 +79,12 @@ public class ProcessWorkerAdapter extends HsBaseAdapter<List<ProcessWorkerBean>>
             tv.setTextColor(mContext.getResources().getColor(R.color.colorTitle));
 //            tv.setBackgroundDrawable(mContext.getResources().getDrawable(R.drawable.text_shap));
 
-            tv.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    mOnSubItemClickListener.onSubItemClick(v);
-                    return true;
-                }
-            });
+//            tv.setOnLongClickListener(new View.OnLongClickListener() {
+//                @Override
+//                public boolean onLongClick(View v) {
+//                    return true;
+//                }
+//            });
             llWorkerNameContainer.addView(tv);
 //            if (i % 2 == 0) layout.addView(tv);
 //            if(layout.getChildCount()<2){

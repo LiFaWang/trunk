@@ -9,27 +9,26 @@ import huansi.net.qianjingapp.entity.WsData;
 
 public class ProcessWorkerBean extends WsData {
     /*
-     {
-        "SWORKTEAMNAME": "流水线1",
-        "ICUPROCEDUREID": "3",
-        "SPARTNAME": "卷下摆",
-        "SEMPLOYEENAMECN": "admin"
-    },
-     */
-    /*
     {
-            "IHDRID": "1005",
-            "IIDEN": "1005",
-            "SWORKTEAMNAME": "流水线1",
-            "ICUPROCEDUREID": "25",
-            "SPARTNAME": "收裤口",
-            "SEMPLOYEENAMECN": "于涛"
-        },
+    "IHDRID": "1056",
+    "IIDEN": "1654",
+    "SWORKTEAMNAME": "2线",
+    "ICUPROCEDUREID": "3475",
+    "SPARTNAME": "分包、验片、配片",
+    "SEMPLOYEENAMECN": "杜新荣",
+    "SPICTUREPATH": "",
+    "SGRADENAME": "",
+    "ISEQ": "276"
+}
      */
-    public String SWORKTEAMNAME="";
-    public String ICUPROCEDUREID="";
-    public String SPARTNAME="";
-    public String SEMPLOYEENAMECN="";
-    public String IHDRID="";
-    public String IIDEN="";
+    public String SWORKTEAMNAME="";//生产线名
+    public String ICUPROCEDUREID="";//
+    public String SPARTNAME="";//工序名
+    public String SEMPLOYEENAMECN="";//员工名
+    public String IHDRID="";//
+    public String IIDEN="";//
+    public String SPICTUREPATH="";//图片路径
+    public String SGRADENAME="";//工序等级
+    public String ISEQ="";//员工等级
+    public boolean isSelected;
 }

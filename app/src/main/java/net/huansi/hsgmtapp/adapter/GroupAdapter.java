@@ -43,7 +43,7 @@ public class GroupAdapter extends HsBaseAdapter<ClassGroupBean> {
         tvWorkerName.setText("姓名:" + bean.SEMPLOYEENAMECN+"("+bean.SWORKTEAMNAME+")");
         tvWorkerNO.setText("工号:" + bean.SEMPLOYEENO);
         tvWorkerType.setText("工种:" + bean.SWORKTYPE);
-        tvWorkerLevel.setText("等级:" + bean.SEMPLOYEENO);
+        tvWorkerLevel.setText("等级:" + bean.SGRADENAME);
         String path="http://"+ SPHelper.getLocalData(mContext, RLFP_IP,String.class.getName(),"").toString()
                 +RLFP_PICTURE_FOLDER+
                 bean.GPIC;

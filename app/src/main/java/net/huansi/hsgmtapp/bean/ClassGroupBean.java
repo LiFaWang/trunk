@@ -8,17 +8,21 @@ import huansi.net.qianjingapp.entity.WsData;
  */
 
 public class ClassGroupBean extends WsData {
-//    {
-//        "SWORKTEAMNAME": "流水线5",
-//            "SEMPLOYEENO": "320300006067",
-//            "SEMPLOYEENAMECN": "戴疆博",
-//            "SWORKTYPE": "",
-//            "GPIC": ""
-//    }
+    /*
+    {
+    "SWORKTEAMNAME": "3线",
+    "SEMPLOYEENO": "320300006068",
+    "SEMPLOYEENAMECN": "石晓宁",
+    "SWORKTYPE": "",
+    "GPIC": "",
+    "SGRADENAME": ""
+}
+     */
     public String SWORKTEAMNAME="";
     public String SEMPLOYEENO="";
     public String SEMPLOYEENAMECN="";
     public String SWORKTYPE="";
+    public String SGRADENAME="";
     public String GPIC="";
     public boolean isSelected;
 
